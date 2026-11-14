@@ -1,0 +1,4 @@
+# Keep notes files in the repo from being served on the public site
+<FilesMatch "\.(md|txt)$">
+  Require all denied
+</FilesMatch>
