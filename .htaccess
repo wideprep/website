@@ -1,4 +1,12 @@
-# Keep notes files in the repo from being served on the public site
-<FilesMatch "\.(md|txt)$">
+# Keep notes and config files in the repo from being served on the public site
+<FilesMatch "\.(md|txt|env)$">
   Require all denied
 </FilesMatch>
+# Hidden files (.env, .gitignore, ...) and PHP helper files starting with "_"
+<FilesMatch "^(\.|_)">
+  Require all denied
+</FilesMatch>
+
+# Clean URLs for the payment API: /api/create-order -> /api/create-order.php
+RewriteEngine On
+RewriteRule ^api/(create-order|verify-payment)/?$ api/$1.php [L]
