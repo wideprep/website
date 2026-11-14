@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /thank-you
+Disallow: /api/
+Sitemap: https://wideprep.in/sitemap.xml

@@ -1,8 +1,28 @@
 # WidePrep website — notes for Claude
 
-Static site (plain HTML/CSS/JS, no build step). Every push to `main` is published to
-https://wideprep.in by Hostinger Git auto-deploy. The site owner is not a developer:
-explain changes in plain language and check pages at phone and desktop width before pushing.
+PHP 8 + MySQL site (no framework, no build step) on Hostinger Premium shared hosting.
+Every push to `main` is published to https://wideprep.in by Hostinger Git auto-deploy.
+The site owner is not a developer: explain changes in plain language and check pages at
+phone and desktop width before pushing.
+
+## How it's organised
+- Pages: `index.php`, `course.php` (/courses/{slug}), `contact.php`, `thank-you.php`, legal pages
+  (`terms`, `privacy`, `refund-policy`, `delivery-policy`), `admin/` (owner-only dashboard).
+  Clean URLs come from `.htaccess`.
+- `inc/` (blocked from the web): `bootstrap.php` (settings, DB, helpers), `courses.php`
+  (catalogue + prices in paise — prices are server-side only), `orders.php` (Razorpay + fulfilment),
+  `mailer.php` (PHPMailer, vendored in `inc/lib`), `layout.php` (header/footer).
+- `api/`: `create-order`, `verify-payment` (HMAC signature check), `razorpay-webhook`, `enquiry`.
+- DB tables `orders` and `enquiries` are created automatically on first use (`ensure_schema`).
+
+## Secrets — never commit them (the repo is public)
+- Production settings live in `wideprep.env` ONE FOLDER ABOVE `public_html` on Hostinger
+  (`/home/u836859130/domains/wideprep.in/wideprep.env`). Upload/replace it with the Hostinger file
+  upload (TUS) to path `wideprep.env` (not under public_html). Keys: RAZORPAY_KEY_ID/SECRET,
+  RAZORPAY_WEBHOOK_SECRET, DB_*, SMTP_*, MAIL_FROM/NOTIFY, ADMIN_PASSWORD_HASH, ACCESS_LINK_<SLUG>.
+- Local development: `.env` in the project root (git-ignored); `DB_DSN=sqlite:...` and
+  `MAIL_DISABLED=1` are handy for testing with `php -S`.
+- Course joining links are secret (ACCESS_LINK_*), never put them in `inc/courses.php`.
 
 ## Brand (from the WidePrep brand kit, v1 Nov 2026 — guide: assets/brand/wideprep-brand-guide.png)
 - Colours: Petrol `#0B4F6C` (main: headings, body text, buttons), Mint `#20BF9B` (accent/highlights),

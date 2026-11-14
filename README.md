@@ -1,6 +1,5 @@
 # WidePrep website
 
-Source for https://wideprep.in.
-
-Every push to the `main` branch is published to the live site automatically by Hostinger.
-This is a plain static site: the files in this folder are served as-is (no build step).
+Source for https://wideprep.in — PHP + MySQL, hosted on Hostinger.
+Every push to `main` is published automatically. Secrets live in a settings file on the
+server (outside the website folder), never in this repository. See CLAUDE.md for details.

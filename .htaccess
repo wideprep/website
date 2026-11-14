@@ -1,12 +1,32 @@
-# Keep notes and config files in the repo from being served on the public site
-<FilesMatch "\.(md|txt|env)$">
+Options -Indexes
+DirectoryIndex index.php index.html
+
+# Block notes, settings and hidden files that live in the repository
+<FilesMatch "\.(md|env|lock|json|sql|db|sqlite)$">
   Require all denied
 </FilesMatch>
-# Hidden files (.env, .gitignore, ...) and PHP helper files starting with "_"
-<FilesMatch "^(\.|_)">
+<FilesMatch "^\.">
   Require all denied
 </FilesMatch>
 
-# Clean URLs for the payment API: /api/create-order -> /api/create-order.php
 RewriteEngine On
-RewriteRule ^api/(create-order|verify-payment)/?$ api/$1.php [L]
+
+# Always use https and the bare domain
+RewriteCond %{HTTPS} !=on [OR]
+RewriteCond %{HTTP_HOST} ^www\. [NC]
+RewriteRule ^ https://wideprep.in%{REQUEST_URI} [L,R=301]
+
+# Server-side code folders are not reachable from the web
+RewriteRule ^inc(/|$) - [F,L]
+
+# Course pages: /courses/ai-toolkit -> course.php?slug=ai-toolkit
+RewriteRule ^courses/([a-z0-9-]+)/?$ course.php?slug=$1 [L,QSA]
+
+# API endpoints: /api/create-order -> api/create-order.php
+RewriteRule ^api/([a-z-]+)/?$ api/$1.php [L]
+
+# Clean page URLs: /terms -> terms.php (only if that file exists)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{DOCUMENT_ROOT}/$1.php -f
+RewriteRule ^([a-z-]+)/?$ $1.php [L]
